@@ -1,0 +1,182 @@
+在git的Shell中操作：
+
+    设置配置文件(.gitconfig)中参数：
+        git config --global user.name "shetengteng"    
+        git config --global user.email "382143256@qq.com"
+
+    在指定的路径下，创建版本库（可以在shell中使用linux命令，如ls）
+        git init
+
+    创建文件：新建立的文件，不会直接存储在仓库的记录中，需要使用add 命令添加
+        touch test01.txt
+
+    查看文件：
+        cat test01.txt
+
+    状态查看：可以查看提交以及新建立的信息
+        git status
+
+    添加文件放入提交记录中:用于下次提交时使用
+        git add test01.txt
+        如果含有文件夹的文件，使用-f 强制，空文件夹不可
+        git add -f sss/
+
+
+    提交操作：必须填写提交的信息message
+        git commit -m "message"
+
+    更改文件信息：修改文件后 git status 可以看到有状态的变化
+        vi test01.txt
+
+
+    提交流程：add -> commit
+
+    查看日志：查看每次操作的日志信息
+        git log
+        git log --pretty = oneline test01.txt 变成一行查看信息
+
+    查看差异：对比对象不同
+        git diff test01.txt 在未add下有效
+        git diff HEAD -- test01.txt 查看当前与版本库中的最新的区别，在未commit下有效
+
+    
+    版本控制：
+        版本回退：commit的内容都会回到一个版本之前
+            git reset --hard HEAD^ 回退一次 ^^或者^2表示2次
+
+        版本穿梭：通过调整HEAD的编号，跳转到不同的版本上
+            git reflog test01.txt 查看版本号记录，每次Commit都会生成一个记录
+            git reset --hard 版本编号
+
+        版本撤销：在未add的情况下，等价于ctrl+z ，撤销修改
+            git checkout -- test01.txt 
+
+    删除操作：保存在暂存区
+        git rm -f test01.txt
+
+三区的理解：
+    工作区：本地硬盘目录
+
+    版本库：隐藏的目录.git目录
+
+    暂存区（索引区）：在.git目录下的index文件
+
+    add操作———文件放入索引区———> commit ————>提交到分支中（默认是master），产生一个HEAD
+
+分支操作：默认是master
+    查看当前分支：
+        git branch
+
+    创建分支：创建一个work的分支
+        git branch work
+
+    切换分支：
+        git checkout work
+        git checkout master 切换的到主分支
+
+    合并分支：当前分支与其他分支合并
+        git merge work 在主分支下与work分支进行合并操作
+
+    删除分支：
+        git branch -d work
+
+    新建分支并切换
+        git checkout -b work
+
+
+克隆操作：
+
+
+
+本地克隆：
+git clone /path/to/repo.git/
+git clone file:///path/to/repo.git/
+如果是远程repository:
+git ssh://[user@]host.xz[:port]/path/to/repo.git/
+git git://host.xz[:port]/path/to/repo.git/
+git http[s]://host.xz[:port]/path/to/repo.git/
+git ftp[s]://host.xz[:port]/path/to/repo.git/
+git rsync://host.xz/path/to/repo.git/
+
+
+win 
+    构建git服务器：Gitblit软件 SSH协议
+    gitblit 1.7.1 
+    gitblit.properties添加后覆盖默认配置:
+        git.repositoriesFolder = ${baseFolder}/git      配置仓库目录，用于放置创建的仓库，默认路径为${baseFolder}/git  
+        git.acceptedPushTransports = HTTP HTTPS SSH     可使用的传输协议，默认支持HTTP,HTTPS,SSH，还有另外一种为GIT  
+        web.siteName = gitblit                          指定站点名称，此名称会作为网站页面标题显示  
+        server.httpPort = 80                            HTTP协议端口，默认为0，表示禁用此协议，为了安全性起见可禁用此协议  
+        server.httpsPort = 8443                         HTTPS协议端口，默认为8443，如果0，表示禁用此协议  
+        server.certificateAlias = localhost             证书别名，该别名是一主机名，使用该别名后只能通过该主机名进行访问Web页面  
+        server.storePassword = gitblit                  服务端KeyStore密码，该密码在生成服务器证书时需要使用 
+
+    点击gitblit.cmd 开启，关闭点击gitblit-stop.cmd
+    
+    设置以Windows Service方式启动Gitblit
+        在Gitblit目录下，找到installService.cmd文件。用“记事本”打开。
+        修改 ARCH
+        32位系统：SET ARCH=x86
+        64位系统：SET ARCH=amd64
+        添加 CD 为程序目录
+        SET CD=D:\Git\Gitblit-1.6.0(你的实际目录)
+        修改StartParams里的启动参数，给空就可以了。原先（--storePassword;gitblit;--baseFolder;%CD%\data）
+        双击Gitblit目录下的installService.cmd文件(以管理员身份运行)。
+        在服务器的服务管理下，就能看到已经存在的gitblit服务了。
+
+
+远端操作：gitblit  密码admin
+    touch README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+
+    本地和远程仓库进行关联
+    git remote add origin ssh://admin@localhost:29418/myTest.git
+    本地的内容推送到远程仓库，-u 表示远程是空的，git会在远程建立新的master分支，将远程与本地关联起来
+    git push -u origin master   
+
+    一般推送：
+    git push orgin master
+
+    从远程获取信息，更新信息，将远端的master分支的信息下载到本地
+    git pull origin master
+
+    克隆：从远端拷贝一份
+    git clone ssh://admin@localhost:29418/myTest.git
+
+
+    ssh://admin@localhost:29418/MyNoteRepo.git
+    git clone http://admin@localhost:58800/r/MyNoteRepo.git
+
+
+缓存你的Github密码
+
+    默认情况下，Git缓慢密码的时长为15分钟
+
+    git config --global credential.helper 'cache --timeout=3600'
+    
+    
+    设置缓存时间为1小时，查看缓存时间：
+
+    git config --global credential.helper
+    
+    
+    长期存储密码：
+
+    git config --global credential.helper store
+    
+    
+    增加远程地址的时候带上密码也是可以的。(推荐)
+
+    http://yourname:password@git.oschina.net/name/project.git
+    
+    
+    生成SSH key,参阅https://help.github.com/articles/generating-an-ssh-key/
+
+    如果想要获取关于github的config手册，则使用命令：
+
+    git help config
+    
+    
+    git remote add origin http://admin@localhost:58800/r/MyNoteRepo.git
